@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -92,12 +93,54 @@ namespace 百度云识别
             streamWriter.Close();
             fileStream.Close();
         }
+        /// <summary>
+        /// 窗口加载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Baidu_Ocr_Load(object sender, EventArgs e)
         {
             ThreadPool.SetMaxThreads(2,int.MaxValue);
+            //关闭线程安全
             Control.CheckForIllegalCrossThreadCalls = false;
-        }
+            
+            // 注册热键为Alt+Ctrl+C, "100"为唯一标识热键
 
+            HotKey.RegisterHotKey(Handle, 100, HotKey.KeyModifiers.None, Keys.F2);
+        }
+        /// <summary>
+        /// 窗口关闭时卸载热键
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Baidu_Ocr_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // 卸载热键
+            HotKey.UnregisterHotKey(Handle, 100);
+        }
+        /// <summary>
+        /// 重写WndProc()方法，通过监视系统消息，来调用过程
+        /// 监视Windows消息
+        /// </summary>
+        /// <param name="m"></param>
+        protected override void WndProc(ref Message m)
+        {
+            //如果m.Msg的值为0x0312那么表示用户按下了热键
+            const int WM_HOTKEY = 0x0312;
+            switch (m.Msg)
+            {
+                case WM_HOTKEY:
+                    if (m.WParam.ToString() == "100")
+                    {
+                        Catch();
+                    }
+
+                    break;
+            }
+
+            // 将系统消息传递自父类的WndProc
+            base.WndProc(ref m);
+        }
         private void button2_Click(object sender, EventArgs e)
         {
             List<Stream> list = new List<Stream>();
@@ -170,6 +213,53 @@ namespace 百度云识别
         private void button3_Click(object sender, EventArgs e)
         {
             Resulttext.Clear();
+        }
+
+
+        private delegate void CallBackDeleagte();
+        /// <summary>
+        /// 快捷键截屏
+        /// </summary>
+        private void Catch()
+        {
+            Cutter cutter = new Cutter();
+            cutter.Show();
+            bool CnaRef = false;
+            this.WindowState=FormWindowState.Minimized;
+            Thread thread = new Thread((obj) =>
+            {
+                try
+                {
+                    while (!CnaRef)
+                    {
+                        if (cutter.CanRead)
+                        {
+                            CnaRef = true;
+                            Action action = () => { pictureBox1.Image = (Bitmap)Clipboard.GetImage().Clone(); };
+                            this.pictureBox1.BeginInvoke(action);
+                            //Clipboard.Clear();
+                            cutter.Dispose();
+                        }
+                    }
+                    //截屏结束，翻译窗口回归正常
+                    var callbacl = obj as CallBackDeleagte;
+                    callbacl();
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            });
+            //thread.SetApartmentState(ApartmentState.STA);
+            CallBackDeleagte callBackDeleagte = MainWindowNomo;
+            thread.Start(callBackDeleagte);
+        }
+        /// <summary>
+        /// 窗口回归正常
+        /// </summary>
+        private void MainWindowNomo()
+        {
+            this.WindowState = FormWindowState.Normal;
         }
     }
 }
