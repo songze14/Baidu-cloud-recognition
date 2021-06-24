@@ -30,16 +30,16 @@ namespace 百度云识别
         private void InitializeComponent()
         {
             this.Resulttext = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btn_Image = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.checkBoxresult = new System.Windows.Forms.CheckBox();
             this.Apikey = new System.Windows.Forms.TextBox();
             this.SECkey = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.btn_ImageList = new System.Windows.Forms.Button();
+            this.btn_clean = new System.Windows.Forms.Button();
+            this.but_Ocr = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -54,16 +54,16 @@ namespace 百度云识别
             this.Resulttext.Size = new System.Drawing.Size(268, 325);
             this.Resulttext.TabIndex = 0;
             // 
-            // button1
+            // btn_Image
             // 
-            this.button1.Location = new System.Drawing.Point(445, 20);
-            this.button1.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(93, 25);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "选择图片文件";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btn_Image.Location = new System.Drawing.Point(445, 20);
+            this.btn_Image.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.btn_Image.Name = "btn_Image";
+            this.btn_Image.Size = new System.Drawing.Size(93, 25);
+            this.btn_Image.TabIndex = 1;
+            this.btn_Image.Text = "选择图片文件";
+            this.btn_Image.UseVisualStyleBackColor = true;
+            this.btn_Image.Click += new System.EventHandler(this.btn_Image_Click);
             // 
             // pictureBox1
             // 
@@ -122,60 +122,60 @@ namespace 百度云识别
             this.label2.TabIndex = 7;
             this.label2.Text = "SECkey";
             // 
-            // button2
+            // btn_ImageList
             // 
-            this.button2.Location = new System.Drawing.Point(367, 20);
-            this.button2.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(73, 25);
-            this.button2.TabIndex = 8;
-            this.button2.Text = "选择文件夹";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btn_ImageList.Location = new System.Drawing.Point(367, 20);
+            this.btn_ImageList.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.btn_ImageList.Name = "btn_ImageList";
+            this.btn_ImageList.Size = new System.Drawing.Size(73, 25);
+            this.btn_ImageList.TabIndex = 8;
+            this.btn_ImageList.Text = "选择文件夹";
+            this.btn_ImageList.UseVisualStyleBackColor = true;
+            this.btn_ImageList.Click += new System.EventHandler(this.Btn_ImageList_Click);
             // 
-            // button3
+            // btn_clean
             // 
-            this.button3.Location = new System.Drawing.Point(542, 3);
-            this.button3.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(73, 25);
-            this.button3.TabIndex = 9;
-            this.button3.Text = "清除";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btn_clean.Location = new System.Drawing.Point(542, 3);
+            this.btn_clean.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.btn_clean.Name = "btn_clean";
+            this.btn_clean.Size = new System.Drawing.Size(73, 25);
+            this.btn_clean.TabIndex = 9;
+            this.btn_clean.Text = "清除";
+            this.btn_clean.UseVisualStyleBackColor = true;
+            this.btn_clean.Click += new System.EventHandler(this.Btn_clean_Click);
             // 
-            // button4
+            // but_Ocr
             // 
-            this.button4.Location = new System.Drawing.Point(367, 47);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 10;
-            this.button4.Text = "button4";
-            this.button4.UseVisualStyleBackColor = true;
-          
+            this.but_Ocr.Enabled = false;
+            this.but_Ocr.Location = new System.Drawing.Point(367, 47);
+            this.but_Ocr.Name = "but_Ocr";
+            this.but_Ocr.Size = new System.Drawing.Size(75, 23);
+            this.but_Ocr.TabIndex = 10;
+            this.but_Ocr.Text = "点击识别";
+            this.but_Ocr.UseVisualStyleBackColor = true;
+            this.but_Ocr.Click += new System.EventHandler(this.but_Ocr_Click);
             // 
             // Baidu_Ocr
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(622, 408);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.but_Ocr);
+            this.Controls.Add(this.btn_clean);
+            this.Controls.Add(this.btn_ImageList);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.SECkey);
             this.Controls.Add(this.Apikey);
             this.Controls.Add(this.checkBoxresult);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btn_Image);
             this.Controls.Add(this.Resulttext);
             this.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.Name = "Baidu_Ocr";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "百度识别文本(by 吾爱:小白来袭2)";
             this.Load += new System.EventHandler(this.Baidu_Ocr_Load);
-            this.FormClosing += Baidu_Ocr_FormClosing;
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -187,16 +187,16 @@ namespace 百度云识别
         #endregion
 
         private System.Windows.Forms.TextBox Resulttext;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btn_Image;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.CheckBox checkBoxresult;
         private System.Windows.Forms.TextBox Apikey;
         private System.Windows.Forms.TextBox SECkey;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button btn_ImageList;
+        private System.Windows.Forms.Button btn_clean;
+        private System.Windows.Forms.Button but_Ocr;
     }
 }
 

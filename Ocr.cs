@@ -21,7 +21,7 @@ namespace 百度云识别
         public string FilePath;
         public string Title;
         public string Filter = "图片(*.jpg,*.jpge,*.bmp,*.png)|*.jpg;*.jpge;*.bmp;*.png";
-        private void button1_Click(object sender, EventArgs e)
+        private void btn_Image_Click(object sender, EventArgs e)
         {
             fileDialog = new OpenFileDialog();
             //fileDialog.Filter = Filter;//过滤选项设置，文本文件，所有文件。
@@ -33,10 +33,14 @@ namespace 百度云识别
                 
                 Stream imagestream = fileDialog.OpenFile();
                 pictureBox1.Image = new Bitmap(imagestream);
-                ThreadPool.QueueUserWorkItem(new WaitCallback(Ocrclick), imagestream);
+                ThreadPool.QueueUserWorkItem(new WaitCallback(Ocr), imagestream);
             }
         }
-        protected void Ocrclick(object s)
+        /// <summary>
+        /// OCR识别开始方法
+        /// </summary>
+        /// <param name="s"></param>
+        protected void Ocr(object s)
         {
             Stream stream = (Stream)s;
             if (this.Apikey.Text.Length > 0)
@@ -132,7 +136,7 @@ namespace 百度云识别
                 case WM_HOTKEY:
                     if (m.WParam.ToString() == "100")
                     {
-                        Catch();
+                        CatchAsync();
                     }
 
                     break;
@@ -141,7 +145,7 @@ namespace 百度云识别
             // 将系统消息传递自父类的WndProc
             base.WndProc(ref m);
         }
-        private void button2_Click(object sender, EventArgs e)
+        private void Btn_ImageList_Click(object sender, EventArgs e)
         {
             List<Stream> list = new List<Stream>();
             FolderBrowserDialog fbd = new FolderBrowserDialog();
@@ -151,6 +155,9 @@ namespace 百度云识别
                 director(fbd.SelectedPath,ref list);
                 if (list!=null)
                 {
+                    //拆分成两个列表，走两个线程
+                    //增加速度
+                    //注意:由于QPS限制 最大为2
                     List<Stream> liststreamOne = new List<Stream>();
                     List<Stream> liststreamTwo = new List<Stream>();
                     for (int i = 0; i < list.Count; i++)
@@ -170,12 +177,14 @@ namespace 百度云识别
             } 
             
         }
+
         private void OcrList(object s)
         {
             List<Stream> listStream = (List<Stream>)s;
+            //不使用异步 防止QPS超过2
             foreach (var item in listStream)
             {
-                Ocrclick(item);
+                Ocr(item);
             }
         }
         /// <summary>
@@ -210,24 +219,23 @@ namespace 百度云识别
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void Btn_clean_Click(object sender, EventArgs e)
         {
             Resulttext.Clear();
         }
 
-
-        private delegate void CallBackDeleagte();
+        #region 快捷键截图
+       
         /// <summary>
         /// 快捷键截屏
         /// </summary>
-        private void Catch()
+        private async void CatchAsync()
         {
+            this.Hide();
             Cutter cutter = new Cutter();
-            cutter.Show();
             bool CnaRef = false;
-            this.WindowState=FormWindowState.Minimized;
-            Thread thread = new Thread((obj) =>
-            {
+            cutter.Show();
+            await Task.Run(() => {
                 try
                 {
                     while (!CnaRef)
@@ -241,25 +249,37 @@ namespace 百度云识别
                             cutter.Dispose();
                         }
                     }
-                    //截屏结束，翻译窗口回归正常
-                    var callbacl = obj as CallBackDeleagte;
-                    callbacl();
                 }
                 catch (Exception)
                 {
                     throw;
                 }
             });
-            //thread.SetApartmentState(ApartmentState.STA);
-            CallBackDeleagte callBackDeleagte = MainWindowNomo;
-            thread.Start(callBackDeleagte);
+            this.Show();
+            but_Ocr.Enabled = true;
+        }
+        private void but_Ocr_Click(object sender, EventArgs e)
+        {
+            BtnOcr();
         }
         /// <summary>
-        /// 窗口回归正常
+        /// 点击识别
         /// </summary>
-        private void MainWindowNomo()
+        private async void BtnOcr()
         {
-            this.WindowState = FormWindowState.Normal;
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                pictureBox1.Image.Save(fbd.SelectedPath + @"\截图.jpg");
+                var stream = File.OpenRead(fbd.SelectedPath + @"\截图.jpg");
+                await Task.Run(() => Ocr(stream));
+                but_Ocr.Enabled = false;
+                //MessageBox.Show(fbd.SelectedPath);
+            }
         }
+        #endregion
+
+
     }
 }

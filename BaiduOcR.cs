@@ -18,6 +18,11 @@ namespace 百度云识别
         {
             BaiAi = new BaiAi( Api_key,  sec_key);
         }
+        /// <summary>
+        /// 识别方法
+        /// </summary>
+        /// <param name="imagestream"></param>
+        /// <returns></returns>
         public  string Ocr(Stream imagestream)
         {
          
