@@ -61,6 +61,7 @@ namespace 百度云识别
             imageStream = stream;
         }
         public Boolean isAuto { get; set; }
+        public Boolean checkB_SaveTxtFile { get; set; } = true;
         public Stream imageStream { get; set; }
     }
 }

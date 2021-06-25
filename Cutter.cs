@@ -125,16 +125,16 @@ namespace 百度云识别
                 // 释放目前的画板
                 g.Dispose();
                 p.Dispose();
-                //// 从当前窗体创建新的画板
-                //Graphics g1 = this.CreateGraphics();
+                // 从当前窗体创建新的画板
+                Graphics g1 = this.CreateGraphics();
 
-                //// 将刚才所画的图片画到截图窗体上
-                //// 为什么不直接在当前窗体画图呢？
-                //// 如果自己解决将矩形画在窗体上，会造成图片抖动并且有无数个矩形
-                //// 这样实现也属于二次缓冲技术
-                //g1.DrawImage(copyBmp, new Point(0, 0));
-                //g1.Dispose();
-              
+                // 将刚才所画的图片画到截图窗体上
+                // 为什么不直接在当前窗体画图呢？
+                // 如果自己解决将矩形画在窗体上，会造成图片抖动并且有无数个矩形
+                // 这样实现也属于二次缓冲技术
+                g1.DrawImage(copyBmp, new Point(0, 0));
+                g1.Dispose();
+
                 // 释放拷贝图片，防止内存被大量消耗
                 copyBmp.Dispose();
             }

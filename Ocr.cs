@@ -37,76 +37,7 @@ namespace 百度云识别
                 ThreadPool.QueueUserWorkItem(new WaitCallback(Ocr), new BaiduOcrClass(true,imagestream) );
             }
         }
-        /// <summary>
-        /// OCR识别开始方法
-        /// </summary>
-        /// <param name="s"></param>
-        protected void Ocr(object s)
-        {
-            BaiduOcrClass baiduOcrClass = (BaiduOcrClass)s;
-            var stream = baiduOcrClass.imageStream;
-            if (this.Apikey.Text.Length > 0)
-            {
-                BaiduOcR = new BaiduOcR(this.Apikey.Text, this.SECkey.Text);
-            }
-            else
-            {
-                BaiduOcR = new BaiduOcR();
-            }
-            string resustring = "";
-            if (checkBoxresult.Checked)
-            {
-                resustring="\r\n" + BaiduOcR.Ocr(stream);
-                Resulttext.Text += resustring;
-            }
-            else
-            {
-                resustring = BaiduOcR.Ocr((stream));
-                Resulttext.Text = resustring;
-            }
-            SaveFileText((FileStream)stream, resustring,baiduOcrClass.isAuto);
-        }
-        /// <summary>
-        /// 保存识别文本
-        /// </summary>
-        /// <param name="fileStream"></param>
-        /// <param name="resustring"></param>
-        protected void SaveFileText(FileStream fileStream, string resustring ,Boolean IsAuto)
-        {
-            string filepath = fileStream.Name;
-            var spiltstr = filepath.Split("\\");
-            filepath = "";
-            for (int i = 0; i < spiltstr.Length; i++)
-            {
-                if (i == spiltstr.Length - 1)
-                {
-                    filepath +="\\" + spiltstr[i]+".txt";
-                }
-                else if (i == spiltstr.Length - 2)
-                {
-                    if (IsAuto)
-                    {
-                        filepath += "OCR翻译完成文本";
-                    }
-                    else
-                    {
-                        filepath += "\\" + spiltstr[i];
-                    }
-                    
-                    if (!Directory.Exists(filepath))
-                        Directory.CreateDirectory(filepath);
-                }
-                else
-                {
-                    filepath +=   spiltstr[i]+ "\\";
-                }
-                
-            }
-            StreamWriter streamWriter = new StreamWriter(filepath,false);
-            streamWriter.Write(resustring);
-            streamWriter.Close();
-            fileStream.Close();
-        }
+     
         /// <summary>
         /// 窗口加载
         /// </summary>
@@ -187,7 +118,86 @@ namespace 百度云识别
             } 
             
         }
+        /// <summary>
+        /// OCR识别开始方法
+        /// </summary>
+        /// <param name="s"></param>
+        protected void Ocr(object s)
+        {
+            BaiduOcrClass baiduOcrClass = (BaiduOcrClass)s;
+            var stream = baiduOcrClass.imageStream;
+            if (this.Apikey.Text.Length > 0)
+            {
+                BaiduOcR = new BaiduOcR(this.Apikey.Text, this.SECkey.Text);
+            }
+            else
+            {
+                BaiduOcR = new BaiduOcR();
+            }
+            string resustring = "";
+            if (checkBoxresult.Checked)
+            {
+                resustring = "\r\n" + BaiduOcR.Ocr(stream);
+                Resulttext.Text += resustring;
+            }
+            else
+            {
+                resustring = BaiduOcR.Ocr((stream));
+                Resulttext.Text = resustring;
+            }
+            //是否需要保存文件
+            if (this.checkB_SaveTextFile.Checked)
+            {
+                SaveFileText((FileStream)stream, resustring, baiduOcrClass.isAuto);
+            }
+            else
+            {
+                stream.Close();
+            }
 
+        }
+        /// <summary>
+        /// 保存识别文本
+        /// </summary>
+        /// <param name="fileStream"></param>
+        /// <param name="resustring"></param>
+        protected void SaveFileText(FileStream fileStream, string resustring, Boolean IsAuto)
+        {
+            string filepath = fileStream.Name;
+            var spiltstr = filepath.Split("\\");
+            filepath = "";
+
+            for (int i = 0; i < spiltstr.Length; i++)
+            {
+                if (i == spiltstr.Length - 1)
+                {
+                    filepath += "\\" + spiltstr[i] + ".txt";
+                }
+                else if (i == spiltstr.Length - 2)
+                {
+                    if (IsAuto)
+                    {
+                        filepath += "OCR翻译完成文本";
+                    }
+                    else
+                    {
+                        filepath += "\\" + spiltstr[i];
+                    }
+
+                    if (!Directory.Exists(filepath))
+                        Directory.CreateDirectory(filepath);
+                }
+                else
+                {
+                    filepath += spiltstr[i] + "\\";
+                }
+
+            }
+            StreamWriter streamWriter = new StreamWriter(filepath, false);
+            streamWriter.Write(resustring);
+            streamWriter.Close();
+            fileStream.Close();
+        }
         private void OcrList(object s)
         {
             List<Stream> listStream = (List<Stream>)s;
@@ -241,6 +251,7 @@ namespace 百度云识别
         /// </summary>
         private async void CatchAsync()
         {
+            this.Resulttext.Clear();
             this.Hide();
             Cutter cutter = new Cutter();
             bool CnaRef = false;
@@ -278,19 +289,24 @@ namespace 百度云识别
         private async void BtnOcr()
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
-
-            if (fbd.ShowDialog() == DialogResult.OK)
+            string imagePath = $"C:\\{Guid.NewGuid()}.jpg";
+            if (checkB_SaveTextFile.CheckState == CheckState.Checked)
             {
-                var imagePath = fbd.SelectedPath + $"\\{Guid.NewGuid()}.jpg";
-                pictureBox1.Image.Save(imagePath);
-                File.SetAttributes(imagePath, FileAttributes.Hidden);
-                var stream = File.OpenRead(imagePath);
-                await Task.Run(() => Ocr(new BaiduOcrClass(false, stream)));
+                if (fbd.ShowDialog( ) == DialogResult.OK)
+                {
+                    imagePath = fbd.SelectedPath + $"\\{Guid.NewGuid()}.jpg";
+                }
 
-                File.Delete(imagePath);
-                but_Ocr.Enabled = false;
-                //MessageBox.Show(fbd.SelectedPath);
             }
+
+            pictureBox1.Image.Save(imagePath);
+            File.SetAttributes(imagePath, FileAttributes.Hidden);
+            var stream = File.OpenRead(imagePath);
+            await Task.Run(() => Ocr(new BaiduOcrClass(false, stream)));
+
+            File.Delete(imagePath);
+            but_Ocr.Enabled = false;
+
         }
         #endregion
 
