@@ -84,7 +84,14 @@ namespace 百度云识别
                 }
                 else if (i == spiltstr.Length - 2)
                 {
-                    if (IsAuto) filepath += "OCR翻译完成文本";
+                    if (IsAuto)
+                    {
+                        filepath += "OCR翻译完成文本";
+                    }
+                    else
+                    {
+                        filepath += "\\" + spiltstr[i];
+                    }
                     
                     if (!Directory.Exists(filepath))
                         Directory.CreateDirectory(filepath);
@@ -276,9 +283,11 @@ namespace 百度云识别
             {
                 var imagePath = fbd.SelectedPath + $"\\{Guid.NewGuid()}.jpg";
                 pictureBox1.Image.Save(imagePath);
+                File.SetAttributes(imagePath, FileAttributes.Hidden);
                 var stream = File.OpenRead(imagePath);
-                ;
                 await Task.Run(() => Ocr(new BaiduOcrClass(false, stream)));
+
+                File.Delete(imagePath);
                 but_Ocr.Enabled = false;
                 //MessageBox.Show(fbd.SelectedPath);
             }
