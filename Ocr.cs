@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -15,12 +14,16 @@ namespace 百度云识别
         {
             InitializeComponent();
         }
+
         public static BaiduOcR BaiduOcR { get; set; }
         public static OpenFileDialog fileDialog;
+
         //默认打开路径
         public string FilePath;
+
         public string Title;
         public string Filter = "图片(*.jpg,*.jpge,*.bmp,*.png)|*.jpg;*.jpge;*.bmp;*.png";
+
         private void btn_Image_Click(object sender, EventArgs e)
         {
             fileDialog = new OpenFileDialog();
@@ -30,14 +33,13 @@ namespace 百度云识别
             fileDialog.Title = Title;
             if (fileDialog.ShowDialog() == DialogResult.OK)
             {
-                
                 Stream imagestream = fileDialog.OpenFile();
                 pictureBox1.Image = new Bitmap(imagestream);
 
-                ThreadPool.QueueUserWorkItem(new WaitCallback(Ocr), new BaiduOcrClass(true,imagestream) );
+                ThreadPool.QueueUserWorkItem(new WaitCallback(Ocr), new BaiduOcrClass(true, imagestream));
             }
         }
-     
+
         /// <summary>
         /// 窗口加载
         /// </summary>
@@ -45,14 +47,15 @@ namespace 百度云识别
         /// <param name="e"></param>
         private void Baidu_Ocr_Load(object sender, EventArgs e)
         {
-            ThreadPool.SetMaxThreads(2,int.MaxValue);
+            ThreadPool.SetMaxThreads(2, int.MaxValue);
             //关闭线程安全
             Control.CheckForIllegalCrossThreadCalls = false;
-            
+
             // 注册热键为Alt+Ctrl+C, "100"为唯一标识热键
 
             HotKey.RegisterHotKey(Handle, 100, HotKey.KeyModifiers.None, Keys.F2);
         }
+
         /// <summary>
         /// 窗口关闭时卸载热键
         /// </summary>
@@ -63,6 +66,7 @@ namespace 百度云识别
             // 卸载热键
             HotKey.UnregisterHotKey(Handle, 100);
         }
+
         /// <summary>
         /// 重写WndProc()方法，通过监视系统消息，来调用过程
         /// 监视Windows消息
@@ -86,6 +90,7 @@ namespace 百度云识别
             // 将系统消息传递自父类的WndProc
             base.WndProc(ref m);
         }
+
         private void Btn_ImageList_Click(object sender, EventArgs e)
         {
             List<Stream> list = new List<Stream>();
@@ -93,8 +98,8 @@ namespace 百度云识别
 
             if (fbd.ShowDialog() == DialogResult.OK)
             {
-                director(fbd.SelectedPath,ref list);
-                if (list!=null)
+                director(fbd.SelectedPath, ref list);
+                if (list != null)
                 {
                     //拆分成两个列表，走两个线程
                     //增加速度
@@ -103,7 +108,7 @@ namespace 百度云识别
                     List<Stream> liststreamTwo = new List<Stream>();
                     for (int i = 0; i < list.Count; i++)
                     {
-                        if (i%2==0)
+                        if (i % 2 == 0)
                         {
                             liststreamTwo.Add(list[i]);
                         }
@@ -115,9 +120,9 @@ namespace 百度云识别
                     ThreadPool.QueueUserWorkItem(new WaitCallback(OcrList), liststreamOne);
                     ThreadPool.QueueUserWorkItem(new WaitCallback(OcrList), liststreamTwo);
                 }
-            } 
-            
+            }
         }
+
         /// <summary>
         /// OCR识别开始方法
         /// </summary>
@@ -154,8 +159,8 @@ namespace 百度云识别
             {
                 stream.Close();
             }
-
         }
+
         /// <summary>
         /// 保存识别文本
         /// </summary>
@@ -191,13 +196,13 @@ namespace 百度云识别
                 {
                     filepath += spiltstr[i] + "\\";
                 }
-
             }
             StreamWriter streamWriter = new StreamWriter(filepath, false);
             streamWriter.Write(resustring);
             streamWriter.Close();
             fileStream.Close();
         }
+
         private void OcrList(object s)
         {
             List<Stream> listStream = (List<Stream>)s;
@@ -207,14 +212,14 @@ namespace 百度云识别
                 Ocr(new BaiduOcrClass(true, imagestream));
             }
         }
+
         /// <summary>
         /// 获取文件夹内的文件
         /// </summary>
         /// <param name="dirs"></param>
         /// <param name="list"></param>
-        public void director(string dirs,ref List<Stream> list)
+        public void director(string dirs, ref List<Stream> list)
         {
-            
             //绑定到指定的文件夹目录
             DirectoryInfo dir = new DirectoryInfo(dirs);
             //检索表示当前目录的文件和子目录
@@ -226,7 +231,7 @@ namespace 百度云识别
                 if (fsinfo is DirectoryInfo)
                 {
                     //递归调用
-                    director(fsinfo.FullName,ref list);
+                    director(fsinfo.FullName, ref list);
                 }
                 else
                 {
@@ -234,7 +239,6 @@ namespace 百度云识别
                     Stream stream = ((FileInfo)fsinfo).Open(FileMode.Open);
                     //将得到的文件全路径放入到集合中
                     list.Add(stream);
-                    
                 }
             }
         }
@@ -245,7 +249,7 @@ namespace 百度云识别
         }
 
         #region 快捷键截图
-       
+
         /// <summary>
         /// 快捷键截屏
         /// </summary>
@@ -253,10 +257,12 @@ namespace 百度云识别
         {
             this.Resulttext.Clear();
             this.Hide();
+            Thread.Sleep(200);
             Cutter cutter = new Cutter();
             bool CnaRef = false;
             cutter.Show();
-            await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 try
                 {
                     while (!CnaRef)
@@ -279,10 +285,12 @@ namespace 百度云识别
             this.Show();
             but_Ocr.Enabled = true;
         }
+
         private void but_Ocr_Click(object sender, EventArgs e)
         {
             BtnOcr();
         }
+
         /// <summary>
         /// 点击识别
         /// </summary>
@@ -292,11 +300,10 @@ namespace 百度云识别
             string imagePath = $"C:\\{Guid.NewGuid()}.jpg";
             if (checkB_SaveTextFile.CheckState == CheckState.Checked)
             {
-                if (fbd.ShowDialog( ) == DialogResult.OK)
+                if (fbd.ShowDialog() == DialogResult.OK)
                 {
                     imagePath = fbd.SelectedPath + $"\\{Guid.NewGuid()}.jpg";
                 }
-
             }
 
             pictureBox1.Image.Save(imagePath);
@@ -306,10 +313,8 @@ namespace 百度云识别
 
             File.Delete(imagePath);
             but_Ocr.Enabled = false;
-
         }
-        #endregion
 
-
+        #endregion 快捷键截图
     }
 }

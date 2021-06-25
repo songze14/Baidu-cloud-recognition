@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace 百度云识别
@@ -14,11 +12,12 @@ namespace 百度云识别
         private Bitmap WinBmp { get; set; }
         public Bitmap retBitmap { get; set; }
         private Rectangle CatchRectangle;
+
         public Cutter()
         {
             this.FormBorderStyle = FormBorderStyle.None;
             this.Width = Screen.AllScreens[0].Bounds.Width;
-            this.Height=Screen.AllScreens[0].Bounds.Height;
+            this.Height = Screen.AllScreens[0].Bounds.Height;
             this.MouseDown += Cutter_MouseDown;
             //this.MouseClick += Cutter_MouseClick;
             this.MouseMove += Cutter_MouseMove;
@@ -29,6 +28,7 @@ namespace 百度云识别
             graphics.Dispose();
             this.BackgroundImage = WinBmp;
         }
+
         /// <summary>
         /// 鼠标抬起，结束截图
         /// </summary>
@@ -36,15 +36,18 @@ namespace 百度云识别
         /// <param name="e"></param>
         private void Cutter_MouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Button==MouseButtons.Left)
+            if (e.Button == MouseButtons.Left)
             {
                 if (Is_CatchStart)
                 {
                     Is_CatchStart = false;
-
+                    if (CatchRectangle.Width == 0 || CatchRectangle.Height == 0)
+                    {
+                        return;
+                    }
                     Bitmap CatchedBmp = new Bitmap(CatchRectangle.Width, CatchRectangle.Height);
                     Graphics g = Graphics.FromImage(CatchedBmp);
-                  
+
                     // 把originBmp中指定部分按照指定大小画到空白图片上
                     // CatchRectangle指定originBmp中指定部分
                     // 第二个参数指定绘制到空白图片的位置和大小
@@ -61,7 +64,7 @@ namespace 百度云识别
                     this.Close();
                 }
             }
-        } 
+        }
 
         /// <summary>
         /// 鼠标点击
@@ -70,7 +73,6 @@ namespace 百度云识别
         /// <param name="e"></param>
         private void Cutter_MouseDown(object sender, MouseEventArgs e)
         {
-            
             // 鼠标左键按下是开始画图，也就是截图
             if (e.Button == MouseButtons.Left)
             {
@@ -81,10 +83,8 @@ namespace 百度云识别
                     DownPonint = new Point(e.X, e.Y);
                 }
             }
-
-                
         }
-     
+
         /// <summary>
         /// 按下左键后移动鼠标，标记截图区域
         /// </summary>
@@ -97,7 +97,7 @@ namespace 百度云识别
             {
                 // 新建一个图片对象，让它与屏幕图片相同
                 Bitmap copyBmp = (Bitmap)WinBmp.Clone();
-             
+
                 // 获取鼠标按下的坐标
                 Point newPoint = new Point(DownPonint.X, DownPonint.Y);
 
@@ -118,7 +118,7 @@ namespace 百度云识别
                 }
 
                 CatchRectangle = new Rectangle(newPoint, new Size(width, height));
-                
+
                 // 将矩形画在画板上
                 g.DrawRectangle(p, CatchRectangle);
 

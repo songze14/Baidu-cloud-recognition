@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -68,9 +67,5 @@ namespace 百度云识别
             //注销指定的热键
             UnregisterHotKey(hwnd, hotKeyId);
         }
-
     }
 }
-
-
-
