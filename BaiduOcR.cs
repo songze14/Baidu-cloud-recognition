@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace 百度云识别
 {
-   public class BaiduOcR
+    public class BaiduOcR
     {
         protected static BaiAi BaiAi { get; set; }
+
         public BaiduOcR()
         {
             BaiAi = new BaiAi();
         }
+
         public BaiduOcR(string Api_key, string sec_key)
         {
-            BaiAi = new BaiAi( Api_key,  sec_key);
+            BaiAi = new BaiAi(Api_key, sec_key);
         }
+
         /// <summary>
         /// 识别方法
         /// </summary>
         /// <param name="imagestream"></param>
         /// <returns></returns>
-        public  string Ocr(Stream imagestream)
+        public string Ocr(Stream imagestream)
         {
-         
             var ocr = BaiAi.OcrClien;
             BinaryReader r = new BinaryReader(imagestream);
 
@@ -38,28 +37,29 @@ namespace 百度云识别
             var result = ocr.AccurateBasic(image);
             var cc = result["words_result"];
             string resultstr = string.Empty;
-            if (cc!=null)
+            if (cc != null)
             {
                 foreach (var item in cc)
                 {
-                    resultstr += item["words"]+"\r\n";
+                    resultstr += item["words"] + "\r\n";
                 }
             }
-            
-            
+
             return resultstr;
         }
     }
+
     /// <summary>
     /// 用于传递图片数据
     /// </summary>
     public class BaiduOcrClass
     {
-        public BaiduOcrClass(Boolean Auto,Stream stream )
+        public BaiduOcrClass(Boolean Auto, Stream stream)
         {
             isAuto = Auto;
             imageStream = stream;
         }
+
         public Boolean isAuto { get; set; }
         public Boolean checkB_SaveTxtFile { get; set; } = true;
         public Stream imageStream { get; set; }
