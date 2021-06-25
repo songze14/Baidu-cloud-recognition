@@ -50,4 +50,17 @@ namespace 百度云识别
             return resultstr;
         }
     }
+    /// <summary>
+    /// 用于传递图片数据
+    /// </summary>
+    public class BaiduOcrClass
+    {
+        public BaiduOcrClass(Boolean Auto,Stream stream )
+        {
+            isAuto = Auto;
+            imageStream = stream;
+        }
+        public Boolean isAuto { get; set; }
+        public Stream imageStream { get; set; }
+    }
 }
