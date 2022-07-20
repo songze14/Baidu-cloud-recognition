@@ -169,11 +169,8 @@ namespace 百度云识别
             }
             finally
             {
-               
-                    stream.Close();
-                
-                message.Close();
-            }     
+                stream.Close();
+            }
         }
 
         /// <summary>
